@@ -31,61 +31,96 @@ router.post(
       // Add more validation rules for other fields as needed
     ],
     async (req, res) => {
-      // Check for validation errors
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-  
       try {
+        // Check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+          return res.status(400).json({ errors: errors.array() });
+        }
+  
         const recipe = new Recipe(req.body);
         await recipe.save();
         res.status(201).json(recipe);
       } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ message: 'Failed to create recipe', error: error.message });
       }
     }
   );
   
 
-// Get all recipes
+// Get all recipes 
 router.get('/recipes', async (req, res) => {
-  try {
-    const recipes = await Recipe.find();
-    res.json(recipes);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+    try {
+      const recipes = await Recipe.find();
+  
+      if (!recipes || recipes.length === 0) {
+        return res.status(404).json({ message: 'No recipes found' });
+      }
+  
+      res.json(recipes);
+    } catch (error) {
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+  });
+  
 
 // Get a single recipe by ID
-router.get('/recipes/:id', getRecipe, (req, res) => {
-  res.json(res.recipe);
-});
+router.get('/recipes/:id', async (req, res) => {
+    try {
+      const recipe = await Recipe.findById(req.params.id);
+  
+      if (!recipe) {
+        return res.status(404).json({ message: 'Recipe not found' });
+      }
+  
+      res.json(recipe);
+    } catch (error) {
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+  });
 
 // Update a recipe by ID
-router.patch('/recipes/:id', getRecipe, async (req, res) => {
-  if (req.body.title != null) {
-    res.recipe.title = req.body.title;
-  }
-  // Update other fields as needed
-  try {
-    const updatedRecipe = await res.recipe.save();
-    res.json(updatedRecipe);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
+router.patch(
+    '/recipes/:id',
+    [
+      body('name', 'Recipe name is required').trim().notEmpty(),
+      // Add more validation rules for other fields as needed
+    ],
+    async (req, res) => {
+      try {
+        // Check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+          return res.status(400).json({ errors: errors.array() });
+        }
+  
+        const updatedRecipe = await Recipe.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  
+        if (!updatedRecipe) {
+          return res.status(404).json({ message: 'Recipe not found' });
+        }
+  
+        res.json(updatedRecipe);
+      } catch (error) {
+        res.status(400).json({ message: 'Failed to update recipe', error: error.message });
+      }
+    }
+  );
 
 // Delete a recipe by ID
-router.delete('/recipes/:id', getRecipe, async (req, res) => {
-  try {
-    await res.recipe.remove();
-    res.json({ message: 'Recipe deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+router.delete('/recipes/:id', async (req, res) => {
+    try {
+      const deletedRecipe = await Recipe.findByIdAndRemove(req.params.id);
+  
+      if (!deletedRecipe) {
+        return res.status(404).json({ message: 'Recipe not found' });
+      }
+  
+      res.json({ message: 'Recipe deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+  });
 
 // Middleware function to get a single recipe by ID
 async function getRecipe(req, res, next) {
