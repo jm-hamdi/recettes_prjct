@@ -1,4 +1,3 @@
-// RecipeList.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/RecipeList.css';

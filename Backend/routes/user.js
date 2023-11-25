@@ -7,16 +7,16 @@ const User = require('../models/user');
 
 // User registration
 router.post('/register', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const user = new User({ username, password });
-    await user.save();
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
+    try {
+      const { username, password } = req.body;
+      const user = new User({ username, password });
+      await user.save();
+      res.status(201).json({ message: 'User registered successfully' });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+  
 // User login
 router.post('/login', async (req, res) => {
   try {

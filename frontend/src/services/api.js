@@ -1,4 +1,4 @@
-// src/api.js
+// services/api.js
 const getToken = () => {
     return localStorage.getItem('token');
   };

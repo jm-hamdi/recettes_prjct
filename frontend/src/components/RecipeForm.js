@@ -1,4 +1,3 @@
-// RecipeForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../styles/RecipeForm.css';
@@ -6,7 +5,6 @@ import '../styles/RecipeForm.css';
 const RecipeForm = () => {
   const [recipe, setRecipe] = useState({
     name: '',
-    // Add other fields as needed
   });
 
   const handleChange = (e) => {
@@ -38,7 +36,18 @@ const RecipeForm = () => {
           Name:
           <input type="text" name="name" value={recipe.name} onChange={handleChange} />
         </label>
-        {/* Add other input fields for additional recipe properties */}
+        <label>
+          Name:
+          <input type="text" name="name" value={recipe.name} onChange={handleChange} />
+        </label>
+        <label>
+          Name:
+          <input type="text" name="name" value={recipe.name} onChange={handleChange} />
+        </label>
+        <label>
+          Name:
+          <input type="text" name="name" value={recipe.name} onChange={handleChange} />
+        </label>
         <button type="submit">Add Recipe</button>
       </form>
     </div>

@@ -1,4 +1,3 @@
-// to handling CRUD operations on recipes
 const express = require('express');
 const router = express.Router();
 const Recipe = require('../models/recipe');
@@ -84,11 +83,9 @@ router.patch(
     '/recipes/:id',
     [
       body('name', 'Recipe name is required').trim().notEmpty(),
-      // Add more validation rules for other fields as needed
     ],
     async (req, res) => {
       try {
-        // Check for validation errors
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
           return res.status(400).json({ errors: errors.array() });

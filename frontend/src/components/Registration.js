@@ -1,7 +1,5 @@
-// Registration.js
 import React, { useState } from 'react';
 import api from '../services/api';
-import '../styles/Registration.css';
 
 const Registration = () => {
   const [username, setUsername] = useState('');
@@ -10,14 +8,16 @@ const Registration = () => {
   const handleRegistration = async (e) => {
     e.preventDefault();
 
-    const response = await api.register({ username, password });
+    try {
+      const response = await api.register({ username, password });
 
-    if (response.ok) {
-      console.log('Registration successful!');
-      // Redirect or handle successful registration as needed
-    } else {
-      console.error('Registration failed!');
-      // Handle registration error
+      if (response.ok) {
+        console.log('Registration successful!');
+      } else {
+        console.error('Registration failed:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error during registration:', error.message);
     }
   };
 
