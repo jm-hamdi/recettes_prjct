@@ -1,9 +1,10 @@
 // App.js
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import RecipeList from './components/RecipeList';
 import RecipeForm from './components/RecipeForm';
 import Login from './components/Login';
+import Registration from './components/Registration';
 import './App.css';
 
 const App = () => {
@@ -36,9 +37,14 @@ const App = () => {
                 </li>
               </>
             ) : (
-              <li>
-                <Link to="/login">Login</Link>
-              </li>
+              <>
+                <li>
+                  <Link to="/login">Login</Link>
+                </li>
+                <li>
+                  <Link to="/register">Register</Link>
+                </li>
+              </>
             )}
           </ul>
         </nav>
@@ -48,12 +54,14 @@ const App = () => {
         <Routes>
           <Route
             path="/login"
-            element={authenticated ? <RecipeList authenticated={authenticated} /> : <Login onLogin={handleLogin} />}
+            element={authenticated ? <Navigate to="/" /> : <Login onLogin={handleLogin} />}
           />
+          <Route path="/register" element={<Registration />} />
           <Route
             path="/add"
-            element={authenticated ? <RecipeForm /> : <Login onLogin={handleLogin} />}
+            element={authenticated ? <RecipeForm /> : <Navigate to="/login" />}
           />
+          <Route path="/" element={<RecipeList authenticated={authenticated} />} />
         </Routes>
       </div>
     </Router>
