@@ -3,6 +3,8 @@ const express = require('express');
 const router = express.Router();
 const Recipe = require('../models/recipe');
 const authenticate = require('../middleware/authenticate');
+const { body, validationResult } = require('express-validator');
+
 
 
 
@@ -10,15 +12,41 @@ const authenticate = require('../middleware/authenticate');
 router.use(authenticate);
 
 // Create a new recipe
-router.post('/recipes', async (req, res) => {
-  try {
-    const recipe = new Recipe(req.body);
-    await recipe.save();
-    res.status(201).json(recipe);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
+// router.post('/recipes', async (req, res) => {
+//   try {
+//     const recipe = new Recipe(req.body);
+//     await recipe.save();
+//     res.status(201).json(recipe);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// });
+
+
+// Create a new recipe with validation
+router.post(
+    '/recipes',
+    [
+      body('name', 'Recipe name is required').trim().notEmpty(),
+      // Add more validation rules for other fields as needed
+    ],
+    async (req, res) => {
+      // Check for validation errors
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+  
+      try {
+        const recipe = new Recipe(req.body);
+        await recipe.save();
+        res.status(201).json(recipe);
+      } catch (error) {
+        res.status(400).json({ message: error.message });
+      }
+    }
+  );
+  
 
 // Get all recipes
 router.get('/recipes', async (req, res) => {
